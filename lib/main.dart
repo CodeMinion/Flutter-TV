@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:another_brother/label_info.dart';
+import 'package:another_tv_remote/another_tv_remote.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -107,6 +108,36 @@ class _MyHomePageState extends State<MyHomePage> {
         //"assets/images/pizza_3.png",
       ]);
 
+  late ScrollController _listController;
+
+
+  @override
+  void initState() {
+    super.initState();
+    _listController = ScrollController();
+    AnotherTvRemote.getTvRemoteEvents().listen((event) {
+      print ("Received event: $event");
+      if (event.action == KeyAction.down) {
+        if (event.type == KeyType.dPadDown) {
+          _listController.animateTo(_listController.position.pixels + 100,
+              duration: const Duration(microseconds: 100), curve: Curves.easeIn);
+        }
+        else if (event.type == KeyType.dPadUp) {
+          _listController.animateTo(_listController.position.pixels - 100,
+              duration: const Duration(microseconds: 100), curve: Curves.easeIn);
+        }
+        else if (event.type == KeyType.ok) {
+          _printIngredientsList();
+        }
+      }
+    });
+  }
+
+  @override
+  void disposed() {
+    super.dispose();
+    _listController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -130,7 +161,9 @@ class _MyHomePageState extends State<MyHomePage> {
                         width: constraints.maxWidth / 2,
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
-                          child: RecipeWidget(recipe: _recipe,),
+                          child: RecipeWidget(
+                            listScrollController: _listController,
+                            recipe: _recipe,),
                         ))),
 
                 Positioned(
@@ -208,6 +241,7 @@ class _MyHomePageState extends State<MyHomePage> {
     List<abPi.NetPrinter> printers =
     await printer.getNetPrinters([abPi.Model.QL_1110NWB.getName()]);
 
+/*
     if (printers.isEmpty) {
       print("No printers found");
       // Show a message if no printers are found.
@@ -219,13 +253,13 @@ class _MyHomePageState extends State<MyHomePage> {
       ));
       return;
     }
-
+*/
     // Note: NSD Is not supported on the emulator so we need to use
     // the printer's IP when running on the emulator.
-    //printInfo.ipAddress = "192.168.1.80";
+    printInfo.ipAddress = "192.168.1.80";
 
     // Get the IP Address from the first printer found.
-    printInfo.ipAddress = printers.single.ipAddress;
+    //printInfo.ipAddress = printers.single.ipAddress;
     //print ("Priner Found: ${printers.single.toMap()}");
     printer.setPrinterInfo(printInfo);
 
@@ -305,9 +339,10 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class RecipeWidget extends StatelessWidget {
-  const RecipeWidget({Key? key, required this.recipe}) : super(key: key);
+  const RecipeWidget({Key? key, required this.recipe, required this.listScrollController}) : super(key: key);
 
   final Recipe recipe;
+  final ScrollController listScrollController;
 
   @override
   Widget build(BuildContext context) {
@@ -316,7 +351,7 @@ class RecipeWidget extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16),
         child: Column(
           children: [
-            Text(recipe.info.name, textAlign: TextAlign.center, style: GoogleFonts.macondo(fontSize: 32, fontWeight: FontWeight.bold),),
+            Text(recipe.info.name, textAlign: TextAlign.center, style: GoogleFonts.macondo(fontSize: 24, fontWeight: FontWeight.bold),),
             Padding(
               padding: const EdgeInsets.only(top:32.0),
               child: Row(
@@ -339,11 +374,13 @@ class RecipeWidget extends StatelessWidget {
                   ]),
             ),
             Padding(
-              padding: EdgeInsets.only(top:32.0),
-              child: Text("Ingredients", style: GoogleFonts.macondo(fontSize: 24, fontWeight: FontWeight.bold)),
+              padding: const EdgeInsets.only(top:32.0),
+              child: Text("Ingredients", style: GoogleFonts.macondo(fontSize: 20, fontWeight: FontWeight.bold)),
             ),
             Expanded(
               child: ListView.builder(
+                padding: const EdgeInsets.only(bottom: 64),
+                controller: listScrollController,
                   itemCount: recipe.sections.length,
                   itemBuilder: (BuildContext context, int index){
                 return RecipeSectionWidget(section: recipe.sections[index]);
@@ -366,8 +403,8 @@ class InfoSectionWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(heading, style: GoogleFonts.macondo(fontSize: 18, fontWeight: FontWeight.bold),),
-        Text(content, style: GoogleFonts.macondo(fontSize: 16))
+        Text(heading, style: GoogleFonts.macondo(fontSize: 14, fontWeight: FontWeight.bold),),
+        Text(content, style: GoogleFonts.macondo(fontSize: 12))
       ],
     );
   }

@@ -4,10 +4,17 @@ packages:
   another_brother:
     dependency: "direct main"
     description:
-      path: "../another_brother"
-      relative: true
-    source: path
+      name: another_brother
+      url: "https://pub.dartlang.org"
+    source: hosted
     version: "0.0.25"
+  another_tv_remote:
+    dependency: "direct main"
+    description:
+      name: another_tv_remote
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.1"
   async:
     dependency: transitive
     description:
@@ -130,6 +137,11 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_web_plugins:
+    dependency: transitive
+    description: flutter
+    source: sdk
+    version: "0.0.0"
   google_fonts:
     dependency: "direct main"
     description:
@@ -151,6 +163,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.0.0"
+  js:
+    dependency: transitive
+    description:
+      name: js
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.6.4"
   lints:
     dependency: transitive
     description:
