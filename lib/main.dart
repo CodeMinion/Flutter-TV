@@ -241,25 +241,25 @@ class _MyHomePageState extends State<MyHomePage> {
     List<abPi.NetPrinter> printers =
     await printer.getNetPrinters([abPi.Model.QL_1110NWB.getName()]);
 
-/*
+
     if (printers.isEmpty) {
       print("No printers found");
       // Show a message if no printers are found.
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Padding(
           padding: EdgeInsets.all(8.0),
-          child: Text("No paired printers found on your device."),
+          child: Text("No network printers found on your device."),
         ),
       ));
       return;
     }
-*/
+
     // Note: NSD Is not supported on the emulator so we need to use
     // the printer's IP when running on the emulator.
-    printInfo.ipAddress = "192.168.1.80";
+    //printInfo.ipAddress = "192.168.1.80";
 
     // Get the IP Address from the first printer found.
-    //printInfo.ipAddress = printers.single.ipAddress;
+    printInfo.ipAddress = printers.single.ipAddress;
     //print ("Priner Found: ${printers.single.toMap()}");
     printer.setPrinterInfo(printInfo);
 
